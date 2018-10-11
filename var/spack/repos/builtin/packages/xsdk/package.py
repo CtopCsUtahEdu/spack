@@ -112,7 +112,7 @@ class Xsdk(Package):
     depends_on('slepc@3.10.0', when='@0.4.0')
 
     depends_on('tasmanian@develop+xsdkflags~openmp', when='@develop')
-    depends_on('tasmanian@develop+xsdkflags~openmp', when='@0.4.0')
+    depends_on('tasmanian@6.0+xsdkflags~openmp', when='@0.4.0')
     
     # the Fortran 2003 bindings of phist require python@3:, but this
     # creates a conflict with other packages like petsc@develop. Actually
