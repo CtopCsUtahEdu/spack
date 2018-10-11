@@ -25,29 +25,13 @@
 from spack import *
 
 
-class PyPygtk(AutotoolsPackage):
-    """bindings for the Gtk2 in Python.
-       use pygobject for Gtk3."""
-    homepage = "http://www.pygtk.org/"
-    url      = "http://ftp.gnome.org/pub/GNOME/sources/pygtk/2.24/pygtk-2.24.0.tar.gz"
+class Diffutils(AutotoolsPackage):
+    """GNU Diffutils is a package of several programs related to finding
+    differences between files."""
 
-    version('2.24.0', 'd27c7f245a9e027f6b6cd9acb7468e36')
+    homepage = "https://www.gnu.org/software/diffutils/"
+    url      = "https://ftp.gnu.org/gnu/diffutils/diffutils-3.6.tar.xz"
 
-    extends('python')
+    version('3.6', sha256='d621e8bdd4b573918c8145f7ae61817d1be9deb4c8d2328a65cea8e11d783bd6')
 
-    depends_on('pkgconfig', type=('build'))
-    depends_on("libffi")
-    # atk@2.28.1 depends on meson which requires python 3
-    depends_on('atk@:2.20.0')
-    # PyGTK requires python 2
-    # Use py-pygobject@3: for GTK bindings for python 3
-    depends_on('python@2:2.99', type=('build', 'run'))
-    depends_on('cairo')
-    depends_on('glib')
-    # for GTK 3.X use pygobject 3.X instead of pygtk
-    depends_on('gtkplus@2.24:2.99')
-    depends_on('py-pygobject@2.28:2.99', type=('build', 'run'))
-    depends_on('py-py2cairo', type=('build', 'run'))
-
-    def install(self, spec, prefix):
-        make('install', parallel=False)
+    build_directory = 'spack-build'

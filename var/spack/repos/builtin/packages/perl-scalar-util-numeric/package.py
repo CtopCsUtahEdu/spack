@@ -25,29 +25,12 @@
 from spack import *
 
 
-class PyPygtk(AutotoolsPackage):
-    """bindings for the Gtk2 in Python.
-       use pygobject for Gtk3."""
-    homepage = "http://www.pygtk.org/"
-    url      = "http://ftp.gnome.org/pub/GNOME/sources/pygtk/2.24/pygtk-2.24.0.tar.gz"
+class PerlScalarUtilNumeric(PerlPackage):
+    """This module exports a number of wrappers around perl's builtin grok_number
+       function, which returns the numeric type of its argument, or 0 if it
+       isn't numeric."""
 
-    version('2.24.0', 'd27c7f245a9e027f6b6cd9acb7468e36')
+    homepage = "https://metacpan.org/pod/Scalar::Util::Numeric"
+    url      = "https://cpan.metacpan.org/authors/id/C/CH/CHOCOLATE/Scalar-Util-Numeric-0.40.tar.gz"
 
-    extends('python')
-
-    depends_on('pkgconfig', type=('build'))
-    depends_on("libffi")
-    # atk@2.28.1 depends on meson which requires python 3
-    depends_on('atk@:2.20.0')
-    # PyGTK requires python 2
-    # Use py-pygobject@3: for GTK bindings for python 3
-    depends_on('python@2:2.99', type=('build', 'run'))
-    depends_on('cairo')
-    depends_on('glib')
-    # for GTK 3.X use pygobject 3.X instead of pygtk
-    depends_on('gtkplus@2.24:2.99')
-    depends_on('py-pygobject@2.28:2.99', type=('build', 'run'))
-    depends_on('py-py2cairo', type=('build', 'run'))
-
-    def install(self, spec, prefix):
-        make('install', parallel=False)
+    version('0.40', sha256='d7501b6d410703db5b1c1942fbfc41af8964a35525d7f766058acf5ca2cc4440')

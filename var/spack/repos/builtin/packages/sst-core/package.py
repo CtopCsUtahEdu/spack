@@ -25,50 +25,39 @@
 from spack import *
 
 
-class Hiop(CMakePackage):
-    """HiOp is an optimization solver for solving certain mathematical
-    optimization problems expressed as nonlinear programming problems.
-    HiOp is a lightweight HPC solver that leverages application's existing
-    data parallelism to parallelize the optimization iterations by using
-    specialized linear algebra kernels."""
+class SstCore(AutotoolsPackage):
+    """The Structural Simulation Toolkit (SST) was developed to explore
+    innovations in highly concurrent systems where the ISA, microarchitecture,
+    and memory interact with the programming model and communications system"""
 
-    homepage = "https://github.com/LLNL/hiop"
-    git      = "https://github.com/LLNL/hiop.git"
+    homepage = "http://sst-simulator.org/"
+    url      = "https://github.com/sstsimulator/sst-core/releases/download/v8.0.0_Final/sstcore-8.0.0.tar.gz"
+    git      = "https://github.com/sstsimulator/sst-core.git"
 
-    version('0.1', tag='v0.1')
+    version('develop', branch='devel')
+    version('8.0.0', sha256='34a62425c3209cf80b6bca99cb0dcc328b67fb84ed92d5e6d6c975ad9319ba8a')
 
-    variant('mpi', default=True,
-            description='Enable/Disable MPI')
+    variant('mpi', default=True, description='Support multi-node simulations using MPI')
+    variant('boost', default=False, description='Use boost')
 
-    variant('deepchecking', default=True,
-            description='Ultra safety checks - \
-            used for increased robustness and self-diagnostics')
+    depends_on('autoconf@1.68:', type='build', when='@develop')
+    depends_on('automake@1.11.1:', type='build', when='@develop')
+    depends_on('libtool@1.2.4:', type='build', when='@develop')
+    depends_on('m4', type='build', when='@develop')
 
+    depends_on('python@:2')
+    depends_on('zlib', type='build')
     depends_on('mpi', when='+mpi')
-    depends_on('lapack')
-    depends_on('blas')
+    depends_on('boost@1.56.0:', type='build', when='+boost')
 
-    flag_handler = build_system_flags
-
-    def cmake_args(self):
+    def configure_args(self):
         args = []
         spec = self.spec
 
-        if '+mpi' in spec:
-            args.append("-DWITH_MPI=ON")
-        else:
-            args.append("-DWITH_MPI=OFF")
+        if '~mpi' in spec:
+            args.append('--disable-mpi')
 
-        if '+deepchecking' in spec:
-            args.append("-DDEEP_CHECKING=ON")
-        else:
-            args.append("-DDEEP_CHECKING=OFF")
-
-        lapack_blas_libs = (
-            spec['lapack'].libs + spec['blas'].libs).joined(';')
-        args.extend([
-            '-DLAPACK_FOUND=TRUE',
-            '-DLAPACK_LIBRARIES={0}'.format(lapack_blas_libs)
-        ])
+        if '+boost' in spec:
+            args.append('--with-boost=%s' % spec['boost'].prefix)
 
         return args
