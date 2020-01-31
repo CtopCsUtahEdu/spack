@@ -6,7 +6,7 @@
 from spack import *
 
 
-class Chill(AutotoolsPackage):
+class Chill(CMakePackage):
     """A polyheadral compiler for autotuning"""
 
     homepage = "http://github.com/CtopCsUtahEdu/chill"
@@ -17,13 +17,13 @@ class Chill(AutotoolsPackage):
 
     version('master', branch='master')
     version('0.3', sha256='574b622368a6bfaadbe9c1fa02fabefdc6c006069246f67d299f943b7e1d8aa3')
-
+    depends_on('cmake@3.1:')
     depends_on('boost@1.66.0 cxxstd=11', type='build')
     depends_on('rose@0.9.10.0 +cxx11', type='build')
-    depends_on('autoconf', type='build')
-    depends_on('automake@1.14:',  type='build')
-    depends_on('libtool', type='build')
-    depends_on('m4', type='build')
+#    depends_on('autoconf', type='build')
+#    depends_on('automake@1.14:',  type='build')
+#    depends_on('libtool', type='build')
+#    depends_on('m4', type='build')
     depends_on('iegenlib', type='build')
     depends_on('bison@3.4', type='build')
     depends_on('flex', type='build')
@@ -56,6 +56,13 @@ class Chill(AutotoolsPackage):
         env.append_path('LD_LIBRARY_PATH', rose_home.lib)
         env.append_path('LD_LIBRARY_PATH', boost_home.lib)
         env.append_path('LD_LIBRARY_PATH', iegen_home.lib)
+
+    def cmake_args(self):
+        args = ['-DROSEHOME={0}'.format(self.spec['rose'].prefix),
+                '-DBOOSTHOME={0}'.format(self.spec['boost'].preifx),
+                '-DIEGENHOME={0}'.format(self.spec['iegenlib'].prefix)]
+
+        return args
 
     def configure_args(self):
         args = ['--with-rose={0}'.format(self.spec['rose'].prefix),
