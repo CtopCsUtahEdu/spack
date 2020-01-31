@@ -1,4 +1,4 @@
-# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -37,6 +37,10 @@ class Gcc(Compiler):
 
     PrgEnv = 'PrgEnv-gnu'
     PrgEnv_compiler = 'gcc'
+
+    @classmethod
+    def verbose_flag(cls):
+        return "-v"
 
     @property
     def openmp_flag(self):
@@ -88,8 +92,28 @@ class Gcc(Compiler):
             return "-std=c++17"
 
     @property
+    def c99_flag(self):
+        if self.version < ver('4.5'):
+            raise UnsupportedCompilerFlag(self,
+                                          "the C99 standard",
+                                          "c99_flag",
+                                          "< 4.5")
+        return "-std=c99"
+
+    @property
+    def c11_flag(self):
+        if self.version < ver('4.7'):
+            raise UnsupportedCompilerFlag(self,
+                                          "the C11 standard",
+                                          "c11_flag",
+                                          "< 4.7")
+        return "-std=c11"
+
+    @property
     def pic_flag(self):
         return "-fPIC"
+
+    required_libs = ['libgcc', 'libgfortran']
 
     @classmethod
     def default_version(cls, cc):

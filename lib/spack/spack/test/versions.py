@@ -1,4 +1,4 @@
-# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -9,7 +9,7 @@ where it makes sense.
 """
 import pytest
 
-from spack.version import Version, ver
+from spack.version import Version, VersionList, ver
 
 
 def assert_ver_lt(a, b):
@@ -266,6 +266,8 @@ def test_contains():
     assert_in('1.3.5-7', '1.2:1.4')
     assert_not_in('1.1', '1.2:1.4')
     assert_not_in('1.5', '1.2:1.4')
+    assert_not_in('1.5', '1.5.1:1.6')
+    assert_not_in('1.5', '1.5.1:')
 
     assert_in('1.4.2', '1.2:1.4')
     assert_not_in('1.4.2', '1.2:1.4.0')
@@ -548,3 +550,15 @@ def test_get_item():
     # Raise TypeError on tuples
     with pytest.raises(TypeError):
         b.__getitem__(1, 2)
+
+
+def test_list_highest():
+    vl = VersionList(['master', '1.2.3', 'develop', '3.4.5', 'foobar'])
+    assert vl.highest() == Version('develop')
+    assert vl.lowest() == Version('foobar')
+    assert vl.highest_numeric() == Version('3.4.5')
+
+    vl2 = VersionList(['master', 'develop'])
+    assert vl2.highest_numeric() is None
+    assert vl2.preferred() == Version('develop')
+    assert vl2.lowest() == Version('master')

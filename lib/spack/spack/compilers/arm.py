@@ -1,4 +1,4 @@
-# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -37,6 +37,10 @@ class Arm(spack.compiler.Compiler):
     version_argument = '--version'
     version_regex = r'Arm C\/C\+\+\/Fortran Compiler version ([^ )]+)'
 
+    @classmethod
+    def verbose_flag(cls):
+        return "-v"
+
     @property
     def openmp_flag(self):
         return "-fopenmp"
@@ -54,8 +58,18 @@ class Arm(spack.compiler.Compiler):
         return "-std=c++1z"
 
     @property
+    def c99_flag(self):
+        return "-std=c99"
+
+    @property
+    def c11_flag(self):
+        return "-std=c11"
+
+    @property
     def pic_flag(self):
         return "-fPIC"
+
+    required_libs = ['libclang', 'libflang']
 
     @classmethod
     def fc_version(cls, fc):
